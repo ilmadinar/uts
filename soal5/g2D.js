@@ -11,7 +11,7 @@
 	0939 Start at Neutron, while accompanying Kakak.
 	0944 Modify sms2darb.js file.
 	
-	Kodingan ini diubah oleh Ilma untuk keperluan UTS Granular
+	Kodingan ini diubah oleh Ilma 10215099 untuk keperluan UTS Granular
 	Simulasi 1D gaya gravitasi
 */
 
@@ -22,7 +22,7 @@ var tbeg, tend, dt, t;
 var Tdata, Ndata, idata;
 var m1, D1, x1, y1, v1, cL1, cF1;
 var m2, D2, x2, y2, v2, cL2, cF2;
-var kN, gammaN;
+var v1x, v1y, v2x, v2y;
 var xmin, ymin, xmax, ymax;
 var G;
 // Execute main function
@@ -54,7 +54,7 @@ function initParams() {
 	gammaN = 8; // N.s/m \in [0,12]
 	
 	// Set physical system parameters of mass m1 and m2
-	m1 = 1000000; // kg
+	m1 = 900005; // kg
 	D1 = 0.007; // m
 	m2 = 1000000000; // kg
 	D2 = 0.03; // m
@@ -66,21 +66,23 @@ function initParams() {
 	cF2 = "#ccf";
 	
 	// Set initial conditions
-	x1 = -0.07; // m
-	y1 = 0; // m
-	v1 = 0; // m/s
-	x2 = 0.05; // m
-	v2 = 0; // m/s
-	y2 = 0; // m
+	x1 = -0.04; // m
+	y1 = -0.04; // m
+	v1x = 0; // m/s
+	v1y = 0;
+	x2 = 0.04; // m
+	v2x = 0; // m/s
+	v2y=0;
+	y2 = 0.04; // m
 	
 	// Set drawing area
 	xmin = -0.1; // m
-	ymin = -0.01; // m
+	ymin = -0.1; // m
 	xmax = 0.1; // m
-	ymax = 0.01; // m
+	ymax = 0.1; // m
 	
 	// Display header information
-	ta.value = "# t\tx1\tx2\tv1\tv2\n";
+	ta.value = "# t\tx1\tx2\ty1\ty2\tv1x\tv2x\tv1y\tv2y\n";
 }
 
 // Perform simulation
@@ -90,7 +92,9 @@ function simulate() {
 		// Display results on textarea
 		ta.value += t.toFixed(3) + "\t" 
 			+ x1.toFixed(4) + "\t" + x2.toFixed(4) + "\t"
-			+ v1.toFixed(3) + "\t" + v2.toFixed(3) + "\n";
+			+ y1.toFixed(4) + "\t" + y2.toFixed(4) + "\t"
+			+ v1x.toFixed(3) + "\t" + v2x.toFixed(3) + "\t"
+			+ v1x.toFixed(3) + "\t" + v2x.toFixed(3) + "\n";
 		ta.scrollTop = ta.scrollHeight;
 		
 		// Display mass position of canvas
@@ -102,26 +106,33 @@ function simulate() {
 	}
 	
 	
-	// Calculate overlap
-	var l12 = Math.abs(x1 - x2);
-	var xi = Math.max(0, 0.5 * (D1 + D2) - l12);
-	var xidot = -Math.abs(v1 - v2) * Math.sign(xi);
-	
 	// hitung gaya pada partikel 1 dan 2
-	var F1 = G*m1*m2/Math.abs((x1-x2)*(x1-x2));
-	var F2 = -F1;
-	
+	if (x1>x2 && y1>y2){
+		clearInterval(proc);
+		btn.innerHTML = "Start";
+		btn.disabled = true;
+	}else{
+	var F1x = G*m1*m2/Math.abs((x1-x2)*(x1-x2));
+	var F2x = -F1x;
+	var F1y = G*m1*m2/Math.abs((y1-y2)*(y1-y2));
+	var F2y = -F1y;
+	}
 	// Use Newton 2nd law of motion
-	var a1 = F1 / m1;
-	var a2 = F2 / m2;
+	var a1x = F1x / m1;
+	var a2x = F2x / m2;
+	var a1y = F1y / m1;
+	var a2y = F2y / m2;
 	
 	// Implement Euler method
-	v1 = v1 + a1*dt;
-	x1 = x1 + v1*dt;
+	v1x = v1x + a1x*dt;
+	x1 = x1 + v1x*dt;
+	v2x = v2x + a2x*dt;
+	x2 = x2 + v2x*dt;
 	
-	v2 = v2 + a2*dt;
-	x2 = x2 + v2*dt;
-	
+	v1y = v1y + a1y*dt;
+	y1 = y1 + v1y*dt;
+	v2y = v2y + a2y*dt;
+	y2 = y2 + v2y*dt;
 	// Terminate simulation if condition meets		
 	if(t >= tend) {
 		clearInterval(proc);
@@ -176,7 +187,7 @@ function drawMassOnCanvas(x, y, R, cLine, cFill, can) {
 function createAndArrangeElements() {
 	// Create text with style h1
 	h1 = document.createElement("h1");
-	h1.innerHTML = "simulasi 1d gerak benda yang saling terpengaruh gravitasi";
+	h1.innerHTML = "simulasi 2d gerak benda yang saling terpengaruh gravitasi satu sama lain";
 	
 	// Create start button
 	btn = document.createElement("button");
@@ -187,14 +198,14 @@ function createAndArrangeElements() {
 		
 	// Create output textarea
 	ta = document.createElement("textarea");
-	ta.style.width = "300px";
-	ta.style.height = "146px";
+	ta.style.width = "560px";
+	ta.style.height = "300px";
 	ta.style.overflowY = "scroll";
 	
 	// Create a canvas
 	can = document.createElement("canvas");
 	can.width = "500";
-	can.height = "250";
+	can.height = "500";
 	can.style.width = can.width + "px";
 	can.style.height = can.height + "px";
 	can.style.border = "1px solid #ccc";
