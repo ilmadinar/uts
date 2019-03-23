@@ -42,7 +42,7 @@ function initParams() {
 	// Set iteration parameters
 	Tproc = 1;
 	tbeg = 0;
-	tend = 0.135;
+	tend = 0.177;
 	dt = 0.0001;
 	t = tbeg;
 	Tdata = 0.001;
@@ -55,9 +55,9 @@ function initParams() {
 	
 	// Set physical system parameters of mass m1 and m2
 	m1 = 1000000; // kg
-	D1 = 0.01; // m
+	D1 = 0.007; // m
 	m2 = 1000000000; // kg
-	D2 = 0.01; // m
+	D2 = 0.03; // m
 	G=6.6 / 100000000000;
 	// Set color of m1 and m2
 	cL1 = "#f00";
@@ -66,7 +66,7 @@ function initParams() {
 	cF2 = "#ccf";
 	
 	// Set initial conditions
-	x1 = -0.05; // m
+	x1 = -0.07; // m
 	y1 = 0; // m
 	v1 = 0; // m/s
 	x2 = 0.05; // m
